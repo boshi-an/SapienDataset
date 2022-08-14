@@ -36,7 +36,7 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
 	urdf = ET.parse(os.path.join(src_path, 'mobility.urdf'))
 	root = urdf.getroot()
 
-	# friction = ET.fromstring("<surface><friction><ode><mu>100.0</mu><mu2>100.0</mu2></ode></friction></surface>")
+	friction = ET.fromstring("<surface><friction><ode><mu>100.0</mu><mu2>100.0</mu2></ode></friction></surface>")
 
 	recursive_scale(root, scale)
 
@@ -96,8 +96,8 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
 						door_bounding_box = mesh_data.get_axis_aligned_bounding_box()
 						door_min.append(door_bounding_box.min_bound)
 						door_max.append(door_bounding_box.max_bound)
-				# if is_handle :
-				# 	tmp.append(friction)
+				if is_handle :
+					tmp.append(friction)
 				
 	if has_handle :
 		handle_center = np.array(handle_center).mean(axis=0) * scale
