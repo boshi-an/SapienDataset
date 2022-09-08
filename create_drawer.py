@@ -36,73 +36,73 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
     urdf = ET.parse(os.path.join(src_path, 'mobility.urdf'))
     root = urdf.getroot()
 
-	friction = ET.fromstring("<surface><friction><ode><mu>100.0</mu><mu2>100.0</mu2></ode></friction></surface>")
+    friction = ET.fromstring("<surface><friction><ode><mu>100.0</mu><mu2>100.0</mu2></ode></friction></surface>")
 
     recursive_scale(root, scale)
 
-	door_open_dir = 1
-	for child in root :
-		if child.tag == "joint" :
-			name = child.attrib["name"]
-			vis = False
-			for tmp in child.findall('child') :
-				if tmp.attrib['link'] == link_id :
-					vis = True
-			for tmp in child.findall('parent') :
-				if tmp.attrib['link'] == link_id :
-					vis = True
-			if vis :
-				# the joint meant to be revolute
-				for tmp in child.findall('axis') :
-					x, y ,z = tmp.attrib['xyz'].split(' ')
-					door_open_dir = int(round(float(y)))
-			else :
-				# not the joint meant to be revolute
-				child.attrib["type"] = "fixed"
-	has_handle = False
-	handle_dx = 0
-	handle_dy = 0
-	handle_dz = 0
-	handle_center = []
-	door_dx = 0
-	door_dy = 0
-	door_dz = 0
-	door_min = []
-	door_max = []
-	for child in root :
-		if child.tag == "link" and child.attrib['name']==link_id :
-			mesh_file_name_list = []
-			for tmp in child.findall('visual') :
-				if 'handle' in tmp.attrib['name'] :
-					has_handle = True
-					for ttmp in tmp.findall('origin') :
-						handle_dx, handle_dy, handle_dz = ttmp.attrib['xyz'].split(' ')
-					for mesh in tmp.findall('geometry') :
-						for mesh_file in mesh.findall('mesh') :
-							mesh_file_name = mesh_file.attrib['filename']
-							mesh_file_name_list.append(mesh_file_name)
-							mesh_data = o3d.io.read_triangle_mesh(os.path.join(src_path, mesh_file_name))
-							handle_center.append(mesh_data.get_center())
-			for tmp in child.findall('collision') :
-				is_handle = False
-				for ttmp in tmp.findall('origin') :
-					door_dx, door_dy, door_dz = ttmp.attrib['xyz'].split(' ')
-				for mesh in tmp.findall('geometry') :
-					for mesh_file in mesh.findall('mesh') :
-						mesh_file_name = mesh_file.attrib['filename']
-						if mesh_file_name in mesh_file_name_list :
-							is_handle = True
-						mesh_data = o3d.io.read_triangle_mesh(os.path.join(src_path, mesh_file_name))
-						door_bounding_box = mesh_data.get_axis_aligned_bounding_box()
-						door_min.append(door_bounding_box.min_bound)
-						door_max.append(door_bounding_box.max_bound)
-				if is_handle :
-					tmp.append(friction)
-				
-	if has_handle :
-		handle_center = np.array(handle_center).mean(axis=0) * scale
-	else :
-		handle_center = np.array([0,0,0])
+    door_open_dir = 1
+    for child in root :
+        if child.tag == "joint" :
+            name = child.attrib["name"]
+            vis = False
+            for tmp in child.findall('child') :
+                if tmp.attrib['link'] == link_id :
+                    vis = True
+            for tmp in child.findall('parent') :
+                if tmp.attrib['link'] == link_id :
+                    vis = True
+            if vis :
+                # the joint meant to be revolute
+                for tmp in child.findall('axis') :
+                    x, y ,z = tmp.attrib['xyz'].split(' ')
+                    door_open_dir = int(round(float(y)))
+            else :
+                # not the joint meant to be revolute
+                child.attrib["type"] = "fixed"
+    has_handle = False
+    handle_dx = 0
+    handle_dy = 0
+    handle_dz = 0
+    handle_center = []
+    door_dx = 0
+    door_dy = 0
+    door_dz = 0
+    door_min = []
+    door_max = []
+    for child in root :
+        if child.tag == "link" and child.attrib['name']==link_id :
+            mesh_file_name_list = []
+            for tmp in child.findall('visual') :
+                if 'handle' in tmp.attrib['name'] :
+                    has_handle = True
+                    for ttmp in tmp.findall('origin') :
+                        handle_dx, handle_dy, handle_dz = ttmp.attrib['xyz'].split(' ')
+                    for mesh in tmp.findall('geometry') :
+                        for mesh_file in mesh.findall('mesh') :
+                            mesh_file_name = mesh_file.attrib['filename']
+                            mesh_file_name_list.append(mesh_file_name)
+                            mesh_data = o3d.io.read_triangle_mesh(os.path.join(src_path, mesh_file_name))
+                            handle_center.append(mesh_data.get_center())
+            for tmp in child.findall('collision') :
+                is_handle = False
+                for ttmp in tmp.findall('origin') :
+                    door_dx, door_dy, door_dz = ttmp.attrib['xyz'].split(' ')
+                for mesh in tmp.findall('geometry') :
+                    for mesh_file in mesh.findall('mesh') :
+                        mesh_file_name = mesh_file.attrib['filename']
+                        if mesh_file_name in mesh_file_name_list :
+                            is_handle = True
+                        mesh_data = o3d.io.read_triangle_mesh(os.path.join(src_path, mesh_file_name))
+                        door_bounding_box = mesh_data.get_axis_aligned_bounding_box()
+                        door_min.append(door_bounding_box.min_bound)
+                        door_max.append(door_bounding_box.max_bound)
+                if is_handle :
+                    tmp.append(friction)
+                
+    if has_handle :
+        handle_center = np.array(handle_center).mean(axis=0) * scale
+    else :
+        handle_center = np.array([0,0,0])
 
     door_min = np.array(door_min).min(axis=0) * scale
     door_max = np.array(door_max).max(axis=0) * scale
@@ -185,8 +185,8 @@ def process_cabinet(source_path, target_path, scale, point_sample, selected_name
 
 if __name__ == "__main__" :
 
-    root = "./SapienDrawer"
-    target_path = "dataset/one_drawer_cabinet_maniskill"
+    root = "./assets"
+    target_path = "dataset/one_drawer_cabinet"
     scale = 0.7
     point_sample = 8192
     cabinet_name_list = get_cabinet_name_list("./drawer.txt")
