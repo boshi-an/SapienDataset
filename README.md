@@ -10,4 +10,6 @@ We processed each object in the following manner:
 - Sample point clouds for each part.
 - Compute bounding box and other info for each part.
 
+You can download the processed dataset from [GoogleDrive](https://drive.google.com/file/d/1PfMZ9KzLn2Z8mbGq9HfW58u6BnuDGT3W/view?usp=share_link) or manually build the dataset from original sapien Partnet Mobility dataset.
+
 To reproduce the data preparation process, run `create_xxx.py`.
