@@ -69,6 +69,8 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
     door_dz = 0
     door_min = []
     door_max = []
+    handle_min = []
+    handle_max = []
     for child in root :
         if child.tag == "link" and child.attrib['name']==link_id :
             mesh_file_name_list = []
@@ -82,6 +84,9 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
                             mesh_file_name = mesh_file.attrib['filename']
                             mesh_file_name_list.append(mesh_file_name)
                             mesh_data = o3d.io.read_triangle_mesh(os.path.join(src_path, mesh_file_name))
+                            handle_bounding_box = mesh_data.get_axis_aligned_bounding_box()
+                            handle_min.append(handle_bounding_box.min_bound)
+                            handle_max.append(handle_bounding_box.max_bound)
                             handle_center.append(mesh_data.get_center())
             for tmp in child.findall('collision') :
                 is_handle = False
@@ -104,6 +109,8 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
     else :
         handle_center = np.array([0,0,0])
 
+    handle_min = np.array(handle_min).min(axis=0) * scale
+    handle_max = np.array(handle_max).max(axis=0) * scale
     door_min = np.array(door_min).min(axis=0) * scale
     door_max = np.array(door_max).max(axis=0) * scale
 
@@ -146,6 +153,14 @@ def build_new_cabinet(src_path, dst_path, link_id, scale) :
                 "x": float(handle_dx)+handle_center.tolist()[0],
                 "y": float(handle_dy)+handle_center.tolist()[1],
                 "z": float(handle_dz)+handle_center.tolist()[2]
+            },
+            "bounding_box": {
+                "xmin": float(handle_dx)+handle_min.tolist()[0],
+                "xmax": float(handle_dx)+handle_max.tolist()[0],
+                "ymin": float(handle_dy)+handle_min.tolist()[1],
+                "ymax": float(handle_dy)+handle_max.tolist()[1],
+                "zmin": float(handle_dz)+handle_min.tolist()[2],
+                "zmax": float(handle_dz)+handle_max.tolist()[2]
             }
         }
         yaml.dump(handle_dict, f)
@@ -204,8 +219,8 @@ def process_cabinet(source_path, target_path, scale, point_sample, available_set
 
 if __name__ == "__main__" :
 
-    root = "./SapienDoor"
-    target_path = "dataset/one_door_cabinet_maniskill"
+    root = "./assets"
+    target_path = "dataset/one_door_cabinet"
     scale = 0.7
     point_sample = 8192
     cabinet_name_list = get_cabinet_name_list("./cabinet.txt")
