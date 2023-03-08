@@ -10,6 +10,14 @@ We processed each object in the following manner:
 - Sample point clouds for each part.
 - Compute bounding box and other info for each part.
 
+## Processed Dataset
+
 You can download the processed dataset from [GoogleDrive](https://drive.google.com/file/d/1PfMZ9KzLn2Z8mbGq9HfW58u6BnuDGT3W/view?usp=share_link) or manually build the dataset from original sapien Partnet Mobility dataset.
 
+## Manually Process Dataset
+
+Since our dataset was based on Sapien Partnet Mobility, you need to first download the original dataset from [Sapien](https://sapien.ucsd.edu/), and put the dataset in 'asset' directory inside the root of your clone of this repo.
+
 To reproduce the data preparation process, run `create_xxx.py`.
+
+You may need to modify the 'root' variable to let the program access the downloaded dataset.
