@@ -12,7 +12,7 @@ We processed each object in the following manner:
 
 ## Processed Dataset
 
-You can download the processed dataset from [GoogleDrive](https://drive.google.com/file/d/1PfMZ9KzLn2Z8mbGq9HfW58u6BnuDGT3W/view?usp=share_link) or manually build the dataset from original sapien Partnet Mobility dataset.
+You can download the processed dataset from [Google Drive](https://drive.google.com/drive/folders/1FyTuz17uSmAbVSmJUbgb-7OgRM5TalCK?usp=sharing) or manually build the dataset from original sapien Partnet Mobility dataset.
 
 ## Manually Process Dataset
 
