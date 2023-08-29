@@ -31,6 +31,13 @@ def recursive_scale(root, scale) :
     for son in root :
         recursive_scale(son, scale)
 
+def find_all_file(base):
+    for root, ds, fs in os.walk(base):
+        for f in fs:
+            if f.endswith('.obj'):
+                fullname = os.path.join(root, f)
+                yield fullname
+
 def build_new_cabinet(src_path, dst_path, link_id, scale) :
 
     urdf = ET.parse(os.path.join(src_path, 'mobility.urdf'))
@@ -227,6 +234,14 @@ if __name__ == "__main__" :
     with open("selected_cabinet.yaml", "r") as f :
         selected_names = yaml.load(f, Loader=Loader)
     print("total", len(cabinet_name_list), "cabinets")
+
+    for file in tqdm(find_all_file(target_path)) :
+        print(file)
+        command = f'/bin/bash -c "source ~/anaconda3/etc/profile.d/conda.sh && conda activate adapose && coacd  {file} {file}"'
+        os.system(command)
+        exit()
+
+    exit()
 
     name_list = []
     path_list = []
